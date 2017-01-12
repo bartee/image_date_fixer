@@ -48,7 +48,7 @@ if args.path:
         succeeded = 0
 
         for image in images:
-            imagepath = os.abspath(os.path.join(args.path, image))
+            imagepath = os.path.abspath(os.path.join(args.path, image))
             res = image_modification_date_from_exif(imagepath)
             succeeded += 1
         if succeeded > 0:
