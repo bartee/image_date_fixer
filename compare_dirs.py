@@ -39,7 +39,9 @@ indexes = {}
 first_index = args.dirs[0]
 for dirname in args.dirs:
     idx = DirectoryIndexer(dirname, DATA_DIR)
+    sub_indexes = idx.get_subdir_indexers()
     indexes.update({dirname: idx})
+    indexes.update(sub_indexes)
 
 # Use the first index to compare all else with
 found_files = {}

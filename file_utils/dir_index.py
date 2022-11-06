@@ -9,6 +9,8 @@ class DirectoryIndexer:
     index = {}
     processed = False
     directory_name = None
+    subdirs = []
+    subdir_index = {}
 
     def __init__(self, directory_name, datadir=None):
         if not os.path.isdir(directory_name):
@@ -41,9 +43,34 @@ class DirectoryIndexer:
                 stats = stats_from_file(filepath)
                 if stats:
                     self.index.update({os.path.basename(file): stats})
-
+            elif os.path.isdir(filepath):
+                self.subdirs.append(filepath)
+        
+        self._index_subdirs()
         self.processed = True
         return
+
+    def get_subdir_indexers(self):
+        """
+        Return the subdir indexers
+        """
+        res = {}
+        for index_name, idx in self.subdir_index.items():
+            res.update({index_name, idx})
+            res.update(idx.get_subdir_indexers())
+
+        return res
+
+    def _index_subdirs(self):
+        """
+        Generate the same index for the subdirs
+
+        """
+        for dirname in self.subdirs:
+            path = os.path.join(self.directory_name, dirname)
+            idx = DirectoryIndexer(path)
+            self.subdir_index.update({path: idx})
+            
 
     def refresh_index(self):
         self.processed = False
