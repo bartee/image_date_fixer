@@ -3,7 +3,6 @@ import logging
 from .hash_index import stats_from_file
 import json
 
-
 class DirectoryIndexer:
 
     index = {}
@@ -30,7 +29,7 @@ class DirectoryIndexer:
                 "Attempted to re-index {0} - skipped".format(self.directory_name)
             )
             return
-        
+
         filelist = os.listdir(self.directory_name)
         logging.warn(
             "Starting to index {0} files in {1}".format(
@@ -45,7 +44,7 @@ class DirectoryIndexer:
                     self.index.update({os.path.basename(file): stats})
             elif os.path.isdir(filepath):
                 self.subdirs.append(filepath)
-        
+        self._store_data()
         self._index_subdirs()
         self.processed = True
         return
@@ -70,7 +69,6 @@ class DirectoryIndexer:
             path = os.path.join(self.directory_name, dirname)
             idx = DirectoryIndexer(path)
             self.subdir_index.update({path: idx})
-            
 
     def refresh_index(self):
         self.processed = False
@@ -80,7 +78,7 @@ class DirectoryIndexer:
             path = os.path.join(self.datadir, filename)
             if os.path.isfile(path):
                 os.remove(path)
-        
+
         self._build_index()
 
     def _generate_filename(self):
@@ -89,17 +87,17 @@ class DirectoryIndexer:
     def _store_data(self):
         if not self.datadir:
             return
-        
+
         filename = "{0}.json".format(self._generate_filename())
         output_path = os.path.join(self.datadir, filename)
         fp = open(output_path, "w")
-        fp.write(self.index)
+        json.dump(self.index, fp)
         fp.close()
 
     def _load_data(self):
         if not self.datadir:
             return
-        
+
         filename = "{0}.json".format(self._generate_filename())
         path = os.path.join(self.datadir, filename)
         if not os.path.isfile(path):

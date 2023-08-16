@@ -6,7 +6,7 @@ import json
 
 logging.basicConfig(level=logging.INFO)
 
-description = """ This utility can compare the content of directories based on 
+description = """ This utility can compare the content of directories based on
 filenames, lastmod dates, hashed content and filesizes
 """
 
@@ -15,7 +15,6 @@ parser.add_argument(
     "--dirs",
     "-d",
     type=str,
-    nargs="+",
     action="append",
     help="Path to the original content dir",
 )
@@ -37,6 +36,7 @@ ensure_dir(OUTPUT_DIR)
 # Create indexes
 indexes = {}
 first_index = args.dirs[0]
+
 for dirname in args.dirs:
     idx = DirectoryIndexer(dirname, DATA_DIR)
     sub_indexes = idx.get_subdir_indexers()
